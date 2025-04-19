@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.2.4",
+    "@walletconnect/ethereum-provider": "^2.20.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "viem": "^2.27.2",
+    "wagmi": "^2.14.16"
+  },
+  "resolutions": {
+    "ethereumjs-block": "4.1.0",
+    "ws": "8.12.0",
+    "tough-cookie": "4.1.3",
+    "uuid": "9.0.1"
+  }
+}
